@@ -15,6 +15,24 @@
                         <Link class="nav-link" href="/tasks/create"><i class="fas fa-edit"></i> Create Task</Link>
                     </li>
                 </ul>
+                <ul v-if="!user" class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <Link class="nav-link" aria-current="page"
+                            :href="route('login')"><i class="fas fa-sign-in"></i> Login</Link>
+                    </li>
+                    <li class="nav-item">
+                        <Link class="nav-link" :href="route('register')"><i class="fas fa-user-plus"></i> Register</Link>
+                    </li>
+                </ul>
+                <ul v-else class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <Link class="nav-link" aria-current="page"
+                            href="#"><i class="fas fa-user"></i> {{ user.name }}</Link>
+                    </li>
+                    <li class="nav-item">
+                        <Link class="nav-link border-0 bg-white" method="post" as="button" :href="route('logout')"><i class="fas fa-sign-out"></i> Logout</Link>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -22,7 +40,10 @@
 </template>
 
 <script setup>
-    import { Link } from '@inertiajs/vue3'; 
+    import { Link, usePage } from '@inertiajs/vue3'; 
+    import { computed } from 'vue';
+
+    const user = computed(() => usePage().props.auth.user);
 </script>
 
 <style>

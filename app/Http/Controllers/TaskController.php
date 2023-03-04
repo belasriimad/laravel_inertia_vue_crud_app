@@ -10,6 +10,11 @@ use Inertia\Inertia;
 
 class TaskController extends Controller
 {
+    public function __construct()
+    {
+        return $this->authorizeResource(Task::class);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -17,7 +22,7 @@ class TaskController extends Controller
     {
         //
         $categories = Category::has('tasks')->get();
-        $tasks = Task::with('category')->paginate(5);
+        $tasks = Task::with('category','user')->paginate(5);
         return Inertia::render('Tasks/Index',[
             'tasks' => $tasks,
             'categories' => $categories
@@ -30,7 +35,7 @@ class TaskController extends Controller
     public function create()
     {
         //
-        $categories = Category::has('tasks')->get();
+        $categories = Category::all();
         return Inertia::render('Tasks/Create',[
             'categories' => $categories
         ]);
@@ -43,11 +48,13 @@ class TaskController extends Controller
     {
         //
         if($request->validated()) {
-            Task::create([
+            $task = new Task([
                 'title' => $request->title,
                 'body' => $request->body,
                 'category_id' => $request->category_id,
             ]);
+
+            auth()->user()->tasks()->save($task);
     
             return redirect()->route('home')->with([
                 'message' => 'Task added successfully',
@@ -70,7 +77,7 @@ class TaskController extends Controller
     public function edit(Task $task)
     {
         //
-        $categories = Category::has('tasks')->get();
+        $categories = Category::all();
         return Inertia::render('Tasks/Edit',[
             'categories' => $categories,
             'task' => $task
@@ -84,7 +91,7 @@ class TaskController extends Controller
     {
         //
         if($request->validated()) {
-            $task->update([
+            auth()->user()->tasks()->find($task->id)->update([
                 'title' => $request->title,
                 'body' => $request->body,
                 'category_id' => $request->category_id,
@@ -115,7 +122,7 @@ class TaskController extends Controller
     public function getTasksByCategory(Category $category){
         $categories = Category::has('tasks')->get();
         return Inertia::render('Tasks/Index',[
-            'tasks' => $category->tasks()->with("category")->paginate(5),
+            'tasks' => $category->tasks()->with("category","user")->paginate(5),
             'categories' => $categories,
             'category' => $category
         ]);
@@ -126,13 +133,13 @@ class TaskController extends Controller
         //
         $categories = Category::has('tasks')->get();
         return Inertia::render('Tasks/Index',[
-            'tasks' => Task::with("category")->orderBy($column, $direction)->paginate(5),
+            'tasks' => Task::with("category","user")->orderBy($column, $direction)->paginate(5),
             'categories' => $categories,
         ]);
     }
 
     public function getTasksByTerm(Request $request){
-        $tasks = Task::with("category")
+        $tasks = Task::with("category","user")
             ->where('title','like','%'.$request->query('term').'%')
             ->orWhere('body','like','%'.$request->query('term').'%')
             ->orWhere('id','like','%'.$request->query('term').'%')

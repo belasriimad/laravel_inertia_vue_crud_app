@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,8 @@ class TaskFactory extends Factory
             //
             'title' => fake()->sentence(),
             'body' => fake()->paragraph(),
-            'category_id' => Category::all()->random()->id
+            'category_id' => Category::all()->random()->id,
+            'user_id' => User::all()->random()->id,
         ];
     }
 }

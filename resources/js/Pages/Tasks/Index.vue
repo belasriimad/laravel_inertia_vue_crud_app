@@ -19,6 +19,7 @@
                           <th>Title</th>
                           <th>Body</th>
                           <th>Done</th>
+                          <th>By</th>
                           <th>Category</th>
                           <th>Created</th>
                           <th>Action</th>
@@ -39,6 +40,7 @@
                         Processing...
                       </span>
                     </td>
+                    <td>{{ task.user.name }}</td>
                     <td>{{ task.category.name }}</td>
                     <td>{{ task.created_at }}</td>
                     <td class="d-flex justify-content-between align-items-center">
