@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -62,5 +63,32 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');
+    }
+
+    public function profile() {
+        return Inertia::render('User/Profile');
+    }
+
+    public function updateProfileImage(Request $request) {
+        $this->validate($request,[
+            'photo_url' => 'mimes:jpg,png,jpeg,webp|max:2000',
+        ]);
+
+        if(Storage::disk('public')->exists(auth()->user()->photo_url)) {
+            Storage::disk('public')->delete(auth()->user()->photo_url);
+        }
+
+        $file = $request->file('photo_url');
+        $path = $file->store('profiles', 'public');
+
+
+        auth()->user()->update([
+            'photo_url' => $path
+        ]);
+
+        return redirect()->route('profile')->with([
+            'message' => 'Image uploaded successfully',
+            'class' => 'alert alert-success'
+        ]);
     }
 }

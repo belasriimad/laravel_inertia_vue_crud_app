@@ -27,7 +27,7 @@
                 <ul v-else class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
                         <Link class="nav-link" aria-current="page"
-                            href="#"><i class="fas fa-user"></i> {{ user.name }}</Link>
+                            :href="route('profile')"><i class="fas fa-user"></i> {{ user.name }}</Link>
                     </li>
                     <li class="nav-item">
                         <Link class="nav-link border-0 bg-white" method="post" as="button" :href="route('logout')"><i class="fas fa-sign-out"></i> Logout</Link>

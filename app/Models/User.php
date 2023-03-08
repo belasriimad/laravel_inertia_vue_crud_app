@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -21,7 +22,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'photo_url'
     ];
+
+    protected $appends = ['image'];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,5 +49,12 @@ class User extends Authenticatable
 
     public function tasks() {
         return $this->hasMany(Task::class);
+    }
+
+    public function getImageAttribute() {
+        if(Storage::disk('public')->exists(auth()->user()->photo_url)) {
+            return asset('storage/'.$this->photo_url);
+        }
+        return $this->photo_url;
     }
 }
