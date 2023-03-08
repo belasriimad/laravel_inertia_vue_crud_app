@@ -8,6 +8,12 @@ use Illuminate\Auth\Access\Response;
 
 class TaskPolicy
 {
+
+    public function before(User $user) : bool
+    {
+        return $user->isAdmin;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
