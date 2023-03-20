@@ -6,6 +6,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
@@ -18,7 +19,7 @@ class AuthController extends Controller
     public function store(Request $request) {
         $this->validate($request,[
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
 
@@ -28,6 +29,8 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        event(new Registered($user));
+        
         auth()->login($user);
 
         $request->session()->regenerate();
@@ -88,6 +91,27 @@ class AuthController extends Controller
 
         return redirect()->route('profile')->with([
             'message' => 'Image uploaded successfully',
+            'class' => 'alert alert-success'
+        ]);
+    }
+
+    public function emailVerification() {
+        if(auth()->user()->hasVerifiedEmail()) {
+            return redirect()->back();
+        }
+        return Inertia::render('User/VerifyEmail');
+    }
+
+    public function getNotifications() {
+        return Inertia::render('User/Notifications')->with([
+            'notifications' => auth()->user()->notifications
+        ]);
+    } 
+
+    public function markNotificationAsRead($id) {
+        auth()->user()->unreadNotifications->where('id', $id)->markAsRead();
+        return redirect()->route('notifications')->with([
+            'message' => 'Notification marked as read successfully',
             'class' => 'alert alert-success'
         ]);
     }

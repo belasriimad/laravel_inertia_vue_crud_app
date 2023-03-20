@@ -26,8 +26,14 @@
                 </ul>
                 <ul v-else class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
+                        <Link :href="route('notifications')" class="nav-link">
+                            <i class="fas fa-bell"></i> 
+                            <span v-if="user.notifications > 0" class="badge bg-danger">{{ user.notifications }}</span>
+                        </Link>
+                    </li>
+                    <li class="nav-item">
                         <Link class="nav-link" aria-current="page"
-                            :href="route('profile')"><i class="fas fa-user"></i> {{ user.name }}</Link>
+                            :href="route('profile')"><i class="fas fa-user"></i> {{ user.data.name }}</Link>
                     </li>
                     <li class="nav-item">
                         <Link class="nav-link border-0 bg-white" method="post" as="button" :href="route('logout')"><i class="fas fa-sign-out"></i> Logout</Link>
@@ -43,7 +49,7 @@
     import { Link, usePage } from '@inertiajs/vue3'; 
     import { computed } from 'vue';
 
-    const user = computed(() => usePage().props.auth.user);
+    const user = computed(() => usePage().props.user);
 </script>
 
 <style>

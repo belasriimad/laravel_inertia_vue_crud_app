@@ -8,7 +8,7 @@
       <div class="col-md-3">
         <div class="card">
           <div class="card-body d-flex flex-column align-items-center">
-            <img :src="user.image" alt="Profile Image" class="img-fluid rounded">
+            <img :src="user.data.image" alt="Profile Image" class="img-fluid rounded">
             <form @submit.prevent="uploadFile">
               <div class="mt-3">
                 <label for="formFile" class="form-label">Change profile image</label>
@@ -28,10 +28,10 @@
           <div class="card-body">
             <ul class="list-group">
               <li class="list-group-item">
-                <span class="fw-bold">Username:</span> {{ user.name }}
+                <span class="fw-bold">Username:</span> {{ user.data.name }}
               </li>
               <li class="list-group-item">
-                <span class="fw-bold">Email:</span> {{ user.email }}
+                <span class="fw-bold">Email:</span> {{ user.data.email }}
               </li>
             </ul>
           </div>
@@ -45,7 +45,7 @@
     import { useForm, usePage } from '@inertiajs/vue3';
     import { computed, reactive } from 'vue';
 
-    const user = computed(() => usePage().props.auth.user);
+    const user = computed(() => usePage().props.user);
 
     const form = useForm({
       photo_url: ''

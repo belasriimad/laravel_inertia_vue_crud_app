@@ -109,8 +109,4 @@
 </script>
 
 <style scoped>
-  select.filter__by__select {
-    font-family: 'FontAwesome', 'sans-serif';
-    font-size: 12px;
-  }
 </style>

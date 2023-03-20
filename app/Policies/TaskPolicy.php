@@ -9,9 +9,12 @@ use Illuminate\Auth\Access\Response;
 class TaskPolicy
 {
 
-    public function before(User $user) : bool
+    public function before(User $user) : bool|null
     {
-        return $user->isAdmin;
+        if($user->isAdmin) {
+            return true;
+        }
+        return null;
     }
 
     /**

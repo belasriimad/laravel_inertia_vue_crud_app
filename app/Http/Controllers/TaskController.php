@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskRequest;
 use App\Models\Category;
 use App\Models\Task;
+use App\Notifications\TaskRemoved;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -91,12 +92,22 @@ class TaskController extends Controller
     {
         //
         if($request->validated()) {
-            auth()->user()->tasks()->find($task->id)->update([
-                'title' => $request->title,
-                'body' => $request->body,
-                'category_id' => $request->category_id,
-                'done' => $request->done
-            ]);
+            if(auth()->user()->isAdmin){
+                $task->update([
+                    'title' => $request->title,
+                    'body' => $request->body,
+                    'category_id' => $request->category_id,
+                    'done' => $request->done,
+                    'user_id' => $task->user_id
+                ]);
+            }else{
+                auth()->user()->tasks()->find($task->id)->update([
+                    'title' => $request->title,
+                    'body' => $request->body,
+                    'category_id' => $request->category_id,
+                    'done' => $request->done
+                ]);
+            }
             
             return redirect()->route('home')->with([
                 'message' => 'Task updated successfully',
@@ -111,6 +122,10 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         //
+        if(auth()->user()->isAdmin){
+            $task->user->notify(new TaskRemoved($task));
+        }
+        
         $task->delete();
 
         return redirect()->route('home')->with([
