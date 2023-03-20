@@ -44,7 +44,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'user' => fn () => $request->user()
                 ?   [
-                        'data' => $request->user()->only('id', 'name', 'email'),
+                        'data' =>  $request->user()->only(['id', 'name', 'email', 'photo_url', 'image']),
+                        'notifications' => $request->user()->unreadNotifications->count()
                     ]
                 : null,
         ]);
